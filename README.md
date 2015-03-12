@@ -1,0 +1,2 @@
+# deconfig
+Corsica Deconfig Kernel
