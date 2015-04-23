@@ -1,39 +1,40 @@
 $(call inherit-product, $(SRC_TARGET_DIR)/product/languages_full.mk)
 
-$(call inherit-product-if-exists, vendor/samsung/corsica/corsica-vendor.mk)
+$(call inherit-product-if-exists, vendor/samsung/i9082/i9082-vendor.mk)
 
-DEVICE_PACKAGE_OVERLAYS += device/samsung/corsica/overlay
+# FIXME: This allows only hdpi resources to be included, saving space.
+#        However, some bug caused holo apps' menu, checkboxes and
+#        other widgets to be transparent.
+# PRODUCT_AAPT_CONFIG := normal hdpi
+# PRODUCT_AAPT_PREF_CONFIG := hdpi
 
-# LDPI assets
-PRODUCT_AAPT_CONFIG := normal ldpi mdpi nodpi
-PRODUCT_AAPT_PREF_CONFIG := ldpi
+DEVICE_PACKAGE_OVERLAYS += device/samsung/i9082/overlay
 
 # Init files
 PRODUCT_COPY_FILES += \
-	device/samsung/corsica/init.rhea_ss_corsica.rc:root/init.rhea_ss_corsica.rc \
-	device/samsung/corsica/init.bcm2165x.usb.rc:root/init.bcm2165x.usb.rc \
-	device/samsung/corsica/init.log.rc:root/init.log.rc \
-	device/samsung/corsica/ueventd.rhea_ss_corsica.rc:root/ueventd.rhea_ss_corsica.rc \
-	device/samsung/corsica/init.recovery.rhea_ss_corsica.rc:root/init.recovery.rhea_ss_corsica.rc \
-	device/samsung/corsica/fstab.rhea_ss_corsica:root/fstab.rhea_ss_corsica \
-	device/samsung/corsica/lpm.rc:root/lpm.rc
+	device/samsung/i9082/init.capri_ss_baffin.rc:root/init.capri_ss_baffin.rc \
+	device/samsung/i9082/init.bcm281x5.usb.rc:root/init.bcm281x5.usb.rc \
+	device/samsung/i9082/init.log.rc:root/init.log.rc \
+	device/samsung/i9082/init.recovery.capri_ss_baffin.rc:root/init.recovery.capri_ss_baffin.rc \
+	device/samsung/i9082/ueventd.capri_ss_baffin.rc:root/ueventd.capri_ss_baffin.rc \
+	device/samsung/i9082/fstab.capri_ss_baffin:root/fstab.capri_ss_baffin \
 
 PRODUCT_COPY_FILES += \
 	frameworks/av/media/libstagefright/data/media_codecs_google_audio.xml:system/etc/media_codecs_google_audio.xml \
 	frameworks/av/media/libstagefright/data/media_codecs_google_telephony.xml:system/etc/media_codecs_google_telephony.xml \
 	frameworks/av/media/libstagefright/data/media_codecs_google_video.xml:system/etc/media_codecs_google_video.xml \
 	frameworks/av/media/libstagefright/data/media_codecs_ffmpeg.xml:system/etc/media_codecs_ffmpeg.xml \
-	device/samsung/corsica/media_codecs.xml:system/etc/media_codecs.xml \
+	device/samsung/i9082/media_codecs.xml:system/etc/media_codecs.xml \
+	device/samsung/i9082/audio_policy.conf:system/etc/audio_policy.conf \
 
 # Prebuilt kl keymaps
 PRODUCT_COPY_FILES += \
-	device/samsung/corsica/bcm_headset.kl:system/usr/keylayout/bcm_headset.kl \
-	device/samsung/corsica/bcm_keypad_v2.kl:system/usr/keylayout/bcm_keypad_v2.kl \
-	device/samsung/corsica/cyttsp4_btn.kl:system/usr/keylayout/cyttsp4_btn.kl \
-	device/samsung/corsica/gpio-keys.kl:system/usr/keylayout/gpio-keys.kl \
-	device/samsung/corsica/samsung-keypad.kl:system/usr/keylayout/samsung-keypad.kl \
-	device/samsung/corsica/sii9234_rcp.kl:system/usr/keylayout/sii9234_rcp.kl \
-	device/samsung/corsica/Generic.kl:system/usr/keylayout/Generic.kl \
+	device/samsung/i9082/bcm_headset.kl:system/usr/keylayout/bcm_headset.kl \
+	device/samsung/i9082/bcm_keypad_v2.kl:system/usr/keylayout/bcm_keypad_v2.kl \
+	device/samsung/i9082/cyttsp4_btn.kl:system/usr/keylayout/cyttsp4_btn.kl \
+	device/samsung/i9082/gpio-keys.kl:system/usr/keylayout/gpio-keys.kl \
+	device/samsung/i9082/samsung-keypad.kl:system/usr/keylayout/samsung-keypad.kl \
+	device/samsung/i9082/sii9234_rcp.kl:system/usr/keylayout/sii9234_rcp.kl
 
 # Filesystem management tools
 PRODUCT_PACKAGES += \
@@ -54,11 +55,11 @@ USE_CUSTOM_AUDIO_POLICY := 1
 # Device-specific packages
 PRODUCT_PACKAGES += \
 	SamsungServiceMode \
+	Torch \
 
 # Charger
 PRODUCT_PACKAGES += \
-	charger_res_images \
-	charger
+	charger_res_images
 
 # Wi-Fi
 PRODUCT_PACKAGES += \
@@ -86,7 +87,6 @@ PRODUCT_COPY_FILES += \
 	frameworks/native/data/etc/android.hardware.touchscreen.multitouch.jazzhand.xml:system/etc/permissions/android.hardware.touchscreen.multitouch.jazzhand.xml \
 	frameworks/native/data/etc/android.software.sip.voip.xml:system/etc/permissions/android.software.sip.voip.xml \
 	frameworks/native/data/etc/android.hardware.usb.accessory.xml:system/etc/permissions/android.hardware.usb.accessory.xml \
-	frameworks/native/data/etc/android.hardware.usb.host.xml:system/etc/permissions/android.hardware.usb.host.xml \
 	packages/wallpapers/LivePicker/android.software.live_wallpaper.xml:system/etc/permissions/android.software.live_wallpaper.xml
 
 # Support for Browser's saved page feature. This allows
@@ -103,6 +103,7 @@ PRODUCT_PROPERTY_OVERRIDES += \
     mobiledata.interfaces=rmnet0 \
     ro.telephony.ril_class=SamsungBCMRIL \
     ro.zygote.disable_gl_preload=true \
+    ro.cm.hardware.cabc=/sys/class/mdnie/mdnie/cabc \
     persist.radio.multisim.config=dsds \
     ro.telephony.call_ring.multiple=0 \
     ro.telephony.call_ring=0 \
@@ -125,10 +126,6 @@ PRODUCT_PROPERTY_OVERRIDES += \
 PRODUCT_DEFAULT_PROPERTY_OVERRIDES += \
     persist.sys.usb.config=mtp
 
-# Boot animation
-TARGET_SCREEN_HEIGHT := 320
-TARGET_SCREEN_WIDTH := 240
-
 # Override phone-hdpi-512-dalvik-heap to match value on stock
 # - helps pass CTS com.squareup.okhttp.internal.spdy.Spdy3Test#tooLargeDataFrame)
 # (property override must come before included property)
@@ -145,5 +142,5 @@ $(call inherit-product, hardware/broadcom/wlan/bcmdhd/config/config-bcm.mk)
 $(call inherit-product, $(SRC_TARGET_DIR)/product/full_base_telephony.mk)
 
 PRODUCT_BUILD_PROP_OVERRIDES += BUILD_UTC_DATE=0
-PRODUCT_NAME := full_corsica
-PRODUCT_DEVICE := corsica
+PRODUCT_NAME := full_i9082
+PRODUCT_DEVICE := i9082
