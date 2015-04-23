@@ -81,6 +81,7 @@ status_t AudioStreamOutSink::getNextWriteTimestamp(int64_t *timestamp) {
 #ifndef HAVE_PRE_KITKAT_AUDIO_BLOB
 status_t AudioStreamOutSink::getTimestamp(AudioTimestamp& timestamp)
 {
+	#ifndef ICS_AUDIO_BLOB
     if (mStream->get_presentation_position == NULL) {
         return INVALID_OPERATION;
     }
@@ -92,6 +93,9 @@ status_t AudioStreamOutSink::getTimestamp(AudioTimestamp& timestamp)
     }
     timestamp.mPosition = position64;
     return OK;
+#else
+    return INVALID_OPERATION;
+#endif
 }
 #endif
 
