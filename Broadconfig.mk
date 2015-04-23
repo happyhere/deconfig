@@ -1,149 +1,125 @@
-$(call inherit-product, $(SRC_TARGET_DIR)/product/languages_full.mk)
+USE_CAMERA_STUB := true
 
-$(call inherit-product-if-exists, vendor/samsung/corsica/corsica-vendor.mk)
+# inherit from the proprietary version
+-include vendor/samsung/corsica/BoardConfigVendor.mk
 
-DEVICE_PACKAGE_OVERLAYS += device/samsung/corsica/overlay
+# Legacy MMAP for pre-lollipop blobs
+BOARD_USES_LEGACY_MMAP := true
 
-# LDPI assets
-PRODUCT_AAPT_CONFIG := normal ldpi mdpi nodpi
-PRODUCT_AAPT_PREF_CONFIG := ldpi
+TARGET_ARCH := arm
+TARGET_NO_BOOTLOADER := true
+TARGET_BOARD_PLATFORM := rhea
+TARGET_CPU_ABI := armeabi-v7a
+TARGET_CPU_ABI2 := armeabi
+TARGET_ARCH_VARIANT := armv7-a-neon
+TARGET_CPU_VARIANT := cortex-a9
 
-# Init files
-PRODUCT_COPY_FILES += \
-	device/samsung/corsica/init.rhea_ss_corsica.rc:root/init.rhea_ss_corsica.rc \
-	device/samsung/corsica/init.bcm2165x.usb.rc:root/init.bcm2165x.usb.rc \
-	device/samsung/corsica/init.log.rc:root/init.log.rc \
-	device/samsung/corsica/ueventd.rhea_ss_corsica.rc:root/ueventd.rhea_ss_corsica.rc \
-	device/samsung/corsica/init.recovery.rhea_ss_corsica.rc:root/init.recovery.rhea_ss_corsica.rc \
-	device/samsung/corsica/fstab.rhea_ss_corsica:root/fstab.rhea_ss_corsica \
-	device/samsung/corsica/lpm.rc:root/lpm.rc
+TARGET_ARCH_LOWMEM := true
 
-PRODUCT_COPY_FILES += \
-	frameworks/av/media/libstagefright/data/media_codecs_google_audio.xml:system/etc/media_codecs_google_audio.xml \
-	frameworks/av/media/libstagefright/data/media_codecs_google_telephony.xml:system/etc/media_codecs_google_telephony.xml \
-	frameworks/av/media/libstagefright/data/media_codecs_google_video.xml:system/etc/media_codecs_google_video.xml \
-	frameworks/av/media/libstagefright/data/media_codecs_ffmpeg.xml:system/etc/media_codecs_ffmpeg.xml \
-	device/samsung/corsica/media_codecs.xml:system/etc/media_codecs.xml \
+TARGET_BOOTLOADER_BOARD_NAME := rhea
 
-# Prebuilt kl keymaps
-PRODUCT_COPY_FILES += \
-	device/samsung/corsica/bcm_headset.kl:system/usr/keylayout/bcm_headset.kl \
-	device/samsung/corsica/bcm_keypad_v2.kl:system/usr/keylayout/bcm_keypad_v2.kl \
-	device/samsung/corsica/cyttsp4_btn.kl:system/usr/keylayout/cyttsp4_btn.kl \
-	device/samsung/corsica/gpio-keys.kl:system/usr/keylayout/gpio-keys.kl \
-	device/samsung/corsica/samsung-keypad.kl:system/usr/keylayout/samsung-keypad.kl \
-	device/samsung/corsica/sii9234_rcp.kl:system/usr/keylayout/sii9234_rcp.kl \
-	device/samsung/corsica/Generic.kl:system/usr/keylayout/Generic.kl \
+BOARD_KERNEL_CMDLINE := androidboot.console=ttyS0
+BOARD_KERNEL_BASE := 0x82000000
+BOARD_KERNEL_PAGESIZE := 4096
 
-# Filesystem management tools
-PRODUCT_PACKAGES += \
-	setup_fs
+TARGET_USERIMAGES_USE_EXT4 := true
 
-# Usb accessory
-PRODUCT_PACKAGES += \
-	com.android.future.usb.accessory
+# fix this up by examining /proc/mtd on a running device
+BOARD_BOOTIMAGE_PARTITION_SIZE := 0x00800000
+BOARD_RECOVERYIMAGE_PARTITION_SIZE := 0x00800000
+BOARD_SYSTEMIMAGE_PARTITION_SIZE := 1002438656
+BOARD_USERDATAIMAGE_PARTITION_SIZE := 2173120512
+BOARD_FLASH_BLOCK_SIZE := 131072
 
-# Audio modules
-PRODUCT_PACKAGES += \
-	audio.a2dp.default \
-	audio.usb.default \
-	audio.r_submix.default \
+TARGET_KERNEL_SOURCE := kernel/samsung/corsica
+TARGET_KERNEL_CONFIG := cyanogenmod_corsica_defconfig
 
-USE_CUSTOM_AUDIO_POLICY := 1
+BOARD_HAS_NO_SELECT_BUTTON := true
+BOARD_HAS_LARGE_FILESYSTEM := true
 
-# Device-specific packages
-PRODUCT_PACKAGES += \
-	SamsungServiceMode \
+# Bluetooth
+BOARD_HAVE_BLUETOOTH := true
+BOARD_HAVE_BLUETOOTH_BCM := true
+BOARD_BLUETOOTH_BDROID_BUILDCFG_INCLUDE_DIR := device/samsung/corsica/bluetooth
+BOARD_BLUEDROID_VENDOR_CONF := device/samsung/corsica/libbt_vndcfg.txt
+
+# Connectivity - Wi-Fi
+BOARD_WPA_SUPPLICANT_DRIVER := NL80211
+WPA_SUPPLICANT_VERSION      := VER_0_8_X
+BOARD_WPA_SUPPLICANT_PRIVATE_LIB := lib_driver_cmd_bcmdhd
+BOARD_HOSTAPD_DRIVER        := NL80211
+BOARD_HOSTAPD_PRIVATE_LIB   := lib_driver_cmd_bcmdhd
+BOARD_WLAN_DEVICE           := bcmdhd
+BOARD_WLAN_DEVICE_REV       := bcm4330
+WIFI_DRIVER_FW_PATH_PARAM   := "/sys/module/dhd/parameters/firmware_path"
+WIFI_DRIVER_FW_PATH_STA     := "/system/etc/wifi/bcmdhd_sta.bin"
+WIFI_DRIVER_FW_PATH_AP      := "/system/etc/wifi/bcmdhd_apsta.bin"
+WIFI_DRIVER_FW_PATH_P2P     := "/system/etc/wifi/bcmdhd_p2p.bin_b2"
+WIFI_DRIVER_MODULE_PATH     := "/system/lib/modules/dhd.ko"
+WIFI_DRIVER_MODULE_NAME     := "dhd"
+WIFI_DRIVER_MODULE_ARG      := "firmware_path=/system/etc/wifi/bcmdhd_sta.bin nvram_path=/system/etc/wifi/nvram_net.txt"
+WIFI_DRIVER_MODULE_AP_ARG   := "firmware_path=/system/etc/wifi/bcmdhd_apsta.bin nvram_path=/system/etc/wifi/nvram_net.txt"
+WIFI_BAND                   := 802_11_ABG
+
+# Wi-Fi Tethering
+BOARD_HAVE_SAMSUNG_WIFI := true
+
+# Hardware rendering
+USE_OPENGL_RENDERER := true
+BOARD_EGL_CFG := device/samsung/corsica/egl.cfg
+BOARD_USE_MHEAP_SCREENSHOT := true
+BOARD_EGL_WORKAROUND_BUG_10194508 := true
+TARGET_RUNNING_WITHOUT_SYNC_FRAMEWORK := true
+BOARD_EGL_NEEDS_FNW := true
+COMMON_GLOBAL_CFLAGS += -DNEEDS_VECTORIMPL_SYMBOLS
+COMMON_GLOBAL_CFLAGS += -DMR0_CAMERA_BLOB -DEGL_NEEDS_FNW
+
+# Audio
+COMMON_GLOBAL_CFLAGS += -DMR0_AUDIO_BLOB
 
 # Charger
-PRODUCT_PACKAGES += \
-	charger_res_images \
-	charger
+BOARD_CHARGER_ENABLE_SUSPEND := true
+BOARD_CHARGING_MODE_BOOTING_LPM := /sys/class/power_supply/battery/batt_lp_charging
 
-# Wi-Fi
-PRODUCT_PACKAGES += \
-	dhcpcd.conf \
-	hostapd \
-	wpa_supplicant \
-	wpa_supplicant.conf
+# RIL
+BOARD_RIL_CLASS := ../../../device/samsung/corsica/ril/
 
-# These are the hardware-specific features
-PRODUCT_COPY_FILES += \
-	frameworks/native/data/etc/handheld_core_hardware.xml:system/etc/permissions/handheld_core_hardware.xml \
-	frameworks/native/data/etc/android.hardware.bluetooth_le.xml:system/etc/permissions/android.hardware.bluetooth_le.xml \
-	frameworks/native/data/etc/android.hardware.camera.front.xml:system/etc/permissions/android.hardware.camera.front.xml \
-	frameworks/native/data/etc/android.hardware.camera.flash-autofocus.xml:system/etc/permissions/android.hardware.camera.flash-autofocus.xml \
-	frameworks/native/data/etc/android.hardware.telephony.gsm.xml:system/etc/permissions/android.hardware.telephony.gsm.xml \
-	frameworks/native/data/etc/android.hardware.location.xml:system/etc/permissions/android.hardware.location.xml \
-	frameworks/native/data/etc/android.hardware.location.gps.xml:system/etc/permissions/android.hardware.location.gps.xml \
-	frameworks/native/data/etc/android.hardware.wifi.xml:system/etc/permissions/android.hardware.wifi.xml \
-	frameworks/native/data/etc/android.hardware.wifi.direct.xml:system/etc/permissions/android.hardware.wifi.direct.xml \
-	frameworks/native/data/etc/android.hardware.sensor.accelerometer.xml:system/etc/permissions/android.hardware.sensor.accelerometer.xml \
-	frameworks/native/data/etc/android.hardware.sensor.compass.xml:system/etc/permissions/android.hardware.sensor.compass.xml \
-	frameworks/native/data/etc/android.hardware.sensor.gyroscope.xml:system/etc/permissions/android.hardware.sensor.gyroscope.xml \
-	frameworks/native/data/etc/android.hardware.sensor.light.xml:system/etc/permissions/android.hardware.sensor.light.xml \
-	frameworks/native/data/etc/android.hardware.sensor.proximity.xml:system/etc/permissions/android.hardware.sensor.proximity.xml \
-	frameworks/native/data/etc/android.hardware.touchscreen.multitouch.jazzhand.xml:system/etc/permissions/android.hardware.touchscreen.multitouch.jazzhand.xml \
-	frameworks/native/data/etc/android.software.sip.voip.xml:system/etc/permissions/android.software.sip.voip.xml \
-	frameworks/native/data/etc/android.hardware.usb.accessory.xml:system/etc/permissions/android.hardware.usb.accessory.xml \
-	frameworks/native/data/etc/android.hardware.usb.host.xml:system/etc/permissions/android.hardware.usb.host.xml \
-	packages/wallpapers/LivePicker/android.software.live_wallpaper.xml:system/etc/permissions/android.software.live_wallpaper.xml
+# Recovery
+TARGET_RECOVERY_FSTAB := device/samsung/corsica/fstab.rhea_ss_corsica
+BOARD_LDPI_RECOVERY := true
+BOARD_USE_CUSTOM_RECOVERY_FONT := "<font_7x16.h>"
+BOARD_CUSTOM_RECOVERY_KEYMAPPING := ../../device/samsung/corsica/recovery/recovery_keys.c
+TARGET_RECOVERY_PIXEL_FORMAT := "BGRA_8888"
 
-# Support for Browser's saved page feature. This allows
-# for pages saved on previous versions of the OS to be
-# viewed on the current OS.
-PRODUCT_PACKAGES += \
-    libskia_legacy
+# UMS
+TARGET_USE_CUSTOM_LUN_FILE_PATH := "/sys/class/android_usb/android0/f_mass_storage/lun%d/file"
 
-# These are the hardware-specific settings that are stored in system properties.
-# Note that the only such settings should be the ones that are too low-level to
-# be reachable from resources or other mechanisms.
-PRODUCT_PROPERTY_OVERRIDES += \
-    wifi.interface=wlan0 \
-    mobiledata.interfaces=rmnet0 \
-    ro.telephony.ril_class=SamsungBCMRIL \
-    ro.zygote.disable_gl_preload=true \
-    persist.radio.multisim.config=dsds \
-    ro.telephony.call_ring.multiple=0 \
-    ro.telephony.call_ring=0 \
+# CMHW
+BOARD_HARDWARE_CLASS := hardware/samsung/cmhw/ device/samsung/corsica/cmhw/
 
-# enable Google-specific location features,
-# like NetworkLocationProvider and LocationCollector
-PRODUCT_PROPERTY_OVERRIDES += \
-    ro.com.google.locationfeatures=1 \
-    ro.com.google.networklocation=1
+# SELinux
+BOARD_SEPOLICY_DIRS += \
+    device/samsung/corsica/sepolicy
 
-# Extended JNI checks
-# The extended JNI checks will cause the system to run more slowly, but they can spot a variety of nasty bugs 
-# before they have a chance to cause problems.
-# Default=true for development builds, set by android buildsystem.
-PRODUCT_PROPERTY_OVERRIDES += \
-    ro.kernel.android.checkjni=0 \
-    dalvik.vm.checkjni=false
+BOARD_SEPOLICY_UNION += \
+    file_contexts \
+    surfaceflinger.te \
+    init.te \
+    shell.te \
+    netd.te \
+    device.te \
+    rild.te \
 
-# MTP
-PRODUCT_DEFAULT_PROPERTY_OVERRIDES += \
-    persist.sys.usb.config=mtp
-
-# Boot animation
-TARGET_SCREEN_HEIGHT := 320
-TARGET_SCREEN_WIDTH := 240
-
-# Override phone-hdpi-512-dalvik-heap to match value on stock
-# - helps pass CTS com.squareup.okhttp.internal.spdy.Spdy3Test#tooLargeDataFrame)
-# (property override must come before included property)
-PRODUCT_PROPERTY_OVERRIDES += \
-    dalvik.vm.heapgrowthlimit=56m \
-
-# Dalvik heap config
-include frameworks/native/build/phone-hdpi-512-dalvik-heap.mk
-
-# we have enough storage space to hold precise GC data
-PRODUCT_TAGS += dalvik.gc.type-precise
-
-$(call inherit-product, hardware/broadcom/wlan/bcmdhd/config/config-bcm.mk)
-$(call inherit-product, $(SRC_TARGET_DIR)/product/full_base_telephony.mk)
-
-PRODUCT_BUILD_PROP_OVERRIDES += BUILD_UTC_DATE=0
-PRODUCT_NAME := full_corsica
-PRODUCT_DEVICE := corsica
+#twrp
+#DEVICE_RESOLUTION := 240x320
+#RECOVERY_GRAPHICS_USE_LINELENGTH := true
+#RECOVERY_SDCARD_ON_DATA := true
+#BOARD_HAS_NO_REAL_SDCARD := true
+#TW_INTERNAL_STORAGE_PATH := "/data/media"
+#TW_INTERNAL_STORAGE_MOUNT_POINT := "data"
+#TW_EXTERNAL_STORAGE_PATH := "/sdcard"
+#TW_EXTERNAL_STORAGE_MOUNT_POINT := "sdcard"
+#TW_BRIGHTNESS_PATH := "/sys/class/backlight/panel/brightness"
+#TW_MAX_BRIGHTNESS := 255
+#TW_INCLUDE_INJECTTWRP := true
+#TWRP_EVENT_LOGGING := false
